@@ -77,6 +77,7 @@ class FunSetSuite extends FunSuite {
     val s1 = singletonSet(1)
     val s2 = singletonSet(2)
     val s3 = singletonSet(3)
+    val all = union(union(s1, s2), s3)
   }
 
   /**
@@ -110,5 +111,42 @@ class FunSetSuite extends FunSuite {
     }
   }
 
+  test("intersection") {
+    new TestSets {
+      val s12 = union(s1, s2)
+      val s13 = union(s1, s3)
+      val common = intersect(s12, s13)
+      assert(contains(common, 1), "1")
+      assert(!contains(common, 2), "2")
+      assert(!contains(common, 3), "3")
+    }
+  }
 
+  test("diff") {
+    new TestSets {
+      val s12 = union(s1, s2)
+      val s13 = union(s1, s3)
+      val d = diff(s12, s13)
+      assert(!contains(d, 1), "1")
+      assert(contains(d, 2), "2")
+      assert(!contains(d, 3), "3")
+    }
+  }
+
+  test("filter") {
+    new TestSets {
+      val s = union(s1, s2)
+      val ss = filter(s, n => n < 2)
+      assert(contains(ss, 1), "1")
+      assert(!contains(ss, 2), "2")
+    }
+  }
+
+  test("forall") {
+    new TestSets {
+      assert(forall(all, n => n > 0), "positive")
+      assert(!forall(all, n => n % 2 == 0), "even")
+      assert(!forall(all, n => n % 2 == 1), "odd")
+    }
+  }
 }
