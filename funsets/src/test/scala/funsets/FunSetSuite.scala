@@ -149,4 +149,22 @@ class FunSetSuite extends FunSuite {
       assert(!forall(all, n => n % 2 == 1), "odd")
     }
   }
+
+  test("exists") {
+    new TestSets {
+      assert(exists(all, n => n % 2 == 0), "even")
+      assert(exists(all, n => n % 2 == 1), "odd")
+      assert(!exists(all, n => n < 0), "negative")
+    }
+  }
+
+  test("map") {
+    new TestSets {
+      val inc = map(all, x => x + 1)
+      assert(forall(inc, n => (2 <= n && n <= 4)))
+      assert(contains(inc, 2))
+      assert(contains(inc, 3))
+      assert(contains(inc, 4))
+    }
+  }
 }

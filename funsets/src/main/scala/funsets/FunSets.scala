@@ -55,24 +55,32 @@ object FunSets {
    * Returns whether all bounded integers within `s` satisfy `p`.
    */
     def forall(s: Set, p: Int => Boolean): Boolean = {
-    def iter(a: Int): Boolean = {
-      if (a < -bound) true
-      else if (!p(a) && contains(s, a)) false
-      else iter(a - 1)
-    }
-    iter(bound)
+      def iter(a: Int): Boolean = {
+        if (a < -bound) true
+        else if (!p(a) && contains(s, a)) false
+        else iter(a - 1)
+      }
+      iter(bound)
   }
   
   /**
    * Returns whether there exists a bounded integer within `s`
    * that satisfies `p`.
    */
-    def exists(s: Set, p: Int => Boolean): Boolean = ???
+    def exists(s: Set, p: Int => Boolean): Boolean = !forall(s, x => !p(x))
   
   /**
    * Returns a set transformed by applying `f` to each element of `s`.
    */
-    def map(s: Set, f: Int => Int): Set = ???
+    def map(s: Set, f: Int => Int): Set = {
+      def iter(memo: Set, a: Int): Set = {
+        if (a < -bound) memo
+        else if (contains(s, a)) iter(union(memo, singletonSet(f(a))), a - 1)
+        else iter(memo, a - 1)
+      }
+      val emptySet = intersect(singletonSet(1), singletonSet(2))
+      iter(emptySet, bound)
+    }
   
   /**
    * Displays the contents of a set
