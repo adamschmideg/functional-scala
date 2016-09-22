@@ -63,11 +63,31 @@ class TweetSetSuite extends FunSuite {
     }
   }
 
+  test("mostRetweeted: ") {
+    new TestSets {
+      assert(set2.mostRetweeted.retweets === 20)
+      assert(set3.mostRetweeted.retweets === 20)
+      assert(set4c.mostRetweeted.retweets === 20)
+      assert(set5.mostRetweeted.retweets === 20)
+    }
+  }
+
+  test("descending: smaller") {
+    new TestSets {
+      assert(set1.descendingByRetweet.size === 0)
+      assert(set2.descendingByRetweet.size === 1)
+      assert(set3.descendingByRetweet.size === 2)
+      assert(set4c.descendingByRetweet.size === 3)
+      assert(set5.descendingByRetweet.size === 4)
+    }
+  }
+
   test("descending: set5") {
     new TestSets {
       val trends = set5.descendingByRetweet
       assert(!trends.isEmpty)
-      assert(trends.head.user == "a" || trends.head.user == "b")
+      assert(size(set5) === trends.size)
+      assert(trends.head.user == "a" || trends.head.user == "b", "from: " + set5.toString + " to: " + trends.toString)
     }
   }
 
