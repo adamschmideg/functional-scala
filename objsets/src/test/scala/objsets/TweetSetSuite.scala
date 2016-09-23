@@ -91,4 +91,7 @@ class TweetSetSuite extends FunSuite {
     }
   }
 
+  test("google vs apple:") {
+    assert(GoogleVsApple.trending.size === 6)
+  }
   }
