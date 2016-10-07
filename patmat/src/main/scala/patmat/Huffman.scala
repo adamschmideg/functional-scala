@@ -24,9 +24,15 @@ object Huffman {
   
 
   // Part 1: Basics
-    def weight(tree: CodeTree): Int = ??? // tree match ...
+    def weight(tree: CodeTree): Int = tree match {
+      case f: Fork => f.weight
+      case l: Leaf => l.weight
+    }
   
-    def chars(tree: CodeTree): List[Char] = ??? // tree match ...
+    def chars(tree: CodeTree): List[Char] = tree match {
+      case f: Fork => f.chars
+      case l: Leaf => List(l.char)
+    }
   
   def makeCodeTree(left: CodeTree, right: CodeTree) =
     Fork(left, right, chars(left) ::: chars(right), weight(left) + weight(right))
@@ -69,7 +75,15 @@ object Huffman {
    *       println("integer is  : "+ theInt)
    *   }
    */
-    def times(chars: List[Char]): List[(Char, Int)] = ???
+    def times(chars: List[Char]): List[(Char, Int)] = {
+      def incCount(chars: List[(Char, Int)], char: Char): List[(Char, Int)] =
+        if (chars.isEmpty) List((char, 1))
+        else if (chars.head._1 == char) (char, chars.head._2 + 1) :: chars.tail
+        else chars.head :: incCount(chars.tail, char)
+
+      if (chars.isEmpty) List()
+      else incCount(times(chars.tail), chars.head)
+    }
   
   /**
    * Returns a list of `Leaf` nodes for a given frequency table `freqs`.
@@ -78,12 +92,13 @@ object Huffman {
    * head of the list should have the smallest weight), where the weight
    * of a leaf is the frequency of the character.
    */
-    def makeOrderedLeafList(freqs: List[(Char, Int)]): List[Leaf] = ???
-  
+    def makeOrderedLeafList(freqs: List[(Char, Int)]): List[Leaf] =
+    freqs.sortWith(_._2 < _._2).map(pair => new Leaf(pair._1, pair._2))
+
   /**
    * Checks whether the list `trees` contains only one single code tree.
    */
-    def singleton(trees: List[CodeTree]): Boolean = ???
+    def singleton(trees: List[CodeTree]): Boolean = ! trees.isEmpty && trees.tail.isEmpty
   
   /**
    * The parameter `trees` of this function is a list of code trees ordered
@@ -97,7 +112,24 @@ object Huffman {
    * If `trees` is a list of less than two elements, that list should be returned
    * unchanged.
    */
-    def combine(trees: List[CodeTree]): List[CodeTree] = ???
+    def combine(trees: List[CodeTree]): List[CodeTree] = {
+      def insertAt[T](list: List[T], item: T, index: Int): List[T] = {
+        if (index < 0) list ::: List(item)
+        else {
+          val (before, after) = list.splitAt(index)
+          before ::: List(item) ::: after
+        }
+      }
+      if (trees.isEmpty) trees
+      else if (singleton(trees)) trees
+      else {
+        val t1 :: t2 :: rest = trees
+        val combined = makeCodeTree(t1, t2)
+        val w = weight(combined)
+        val i = rest.indexWhere(t => weight(t) >= w)
+        insertAt(rest, combined, i)
+      }
+    }
   
   /**
    * This function will be called in the following way:
