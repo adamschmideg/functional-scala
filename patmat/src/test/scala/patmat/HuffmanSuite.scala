@@ -64,4 +64,11 @@ class HuffmanSuite extends FunSuite {
     }
   }
 
+  test("French roundtrip with quickEncode") {
+    val text = "huffman"
+    val encoded = quickEncode(frenchCode)(text.toList)
+    val decoded = decode(frenchCode, encoded).mkString("")
+    assert(text === decoded)
+  }
+
 }
