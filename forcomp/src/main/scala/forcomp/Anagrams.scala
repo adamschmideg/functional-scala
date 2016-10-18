@@ -106,7 +106,16 @@ object Anagrams {
    *  Note: the resulting value is an occurrence - meaning it is sorted
    *  and has no zero-entries.
    */
-  def subtract(x: Occurrences, y: Occurrences): Occurrences = ???
+  def subtract(x: Occurrences, y: Occurrences): Occurrences =
+    y.foldLeft(x)((memo, o) => subtractOne(memo, o))
+
+    def subtractOne(xs: Occurrences, o: (Char, Int)): Occurrences = xs match {
+      case Nil => Nil
+      case (o._1, n) :: xs => if (n > o._2) (o._1, n - o._2) :: xs else xs
+      case x :: xs => x :: subtractOne(xs, o)
+    }
+
+
 
   /** Returns a list of all anagram sentences of the given sentence.
    *
